@@ -5,6 +5,8 @@ open System.Linq
 open Microsoft.EntityFrameworkCore
 
 module EmployeeRepository =
+    let getEmployees (context:NiravTrialContext)=
+        context.Employees.ToList()
     let getEmployee (context:NiravTrialContext) id =
         query {
             for employee in context.Employees do
