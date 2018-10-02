@@ -8,6 +8,10 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Logging
 open Microsoft.Extensions.DependencyInjection
 open Giraffe
+open Microsoft.AspNetCore.Http
+
+open CompositionRoot
+open TrialLib.Model
 
 // ---------------------------------
 // Models
@@ -55,8 +59,43 @@ let indexHandler (name : string) =
     let view      = Views.index model
     htmlView view
 
+// let addEmployeeHandler : HttpHandler =
+//      fun (next : HttpFunc) (ctx : HttpContext) ->
+//              let employee = ctx.BindModel<Employee>()
+//              addEmployee(employee) 
+
+let getEmployeesHandler (id:int) : HttpHandler = 
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+        if id = 0
+        then
+            json getEmployees next ctx
+        else
+            match (getEmployee id) with
+            | Some (employee) -> json employee next ctx
+            | None -> json (Array.Empty<Employee>()) next ctx
+
+let addUpdateEmployeeHander (employee : Employee) : HttpHandler =
+    fun (next : HttpFunc) (ctx : HttpContext) ->
+            if employee.Id = 0
+            then
+                addEmployee employee
+            else
+                updateEmployee employee
+            json employee next ctx
+
+
 let webApp =
     choose [
+        subRouteCi "/employees"
+                    (
+                        choose [
+                            GET >=> choose [
+                                routeCix "(/?)" >=> getEmployeesHandler 0
+                                routeCif "/%i" getEmployeesHandler
+                            ]
+                            POST >=> bindJson<Employee>( addUpdateEmployeeHander)
+                        ]
+                    )
         GET >=>
             choose [
                 route "/" >=> indexHandler "world"

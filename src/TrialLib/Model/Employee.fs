@@ -1,11 +1,22 @@
 namespace TrialLib.Model
 
+open System.Collections.Generic
+open System.ComponentModel.DataAnnotations.Schema
+open System.ComponentModel.DataAnnotations.Schema
+
 type EmployeeId = int
 
 
-type Employee() =
-    member val Id :EmployeeId = 0 
-    member val FirstName:string=""
-    member val LastName:string=""
-    member val AddressLine1:string = null
-    member val AddressLine2:string = null
+[<Table("employee") >]
+type [<CLIMutable>] Employee = {
+    [<Column("id")>]
+    Id :EmployeeId
+    [<Column("firstname")>]
+    FirstName:string
+    [<Column("lastname")>]
+    LastName:string
+    [<Column("addressline1")>]
+    AddressLine1:string 
+    [<Column("addressline2")>]
+    AddressLine2:string 
+    }

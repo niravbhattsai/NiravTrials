@@ -1,4 +1,4 @@
-module CompostionRoot
+module CompositionRoot
 
 open TrialLib.DataAccess
 open Microsoft.EntityFrameworkCore
